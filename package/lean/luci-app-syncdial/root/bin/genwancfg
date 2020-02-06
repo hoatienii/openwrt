@@ -1,10 +1,10 @@
 #!/bin/sh
-#macvlan及PPPoE拨号接口配置批量自动生成脚本
+#Macvlan and PPPoE dial-up interface configuration batch automatic generation script
 #Copyright (C) 2016
 . /lib/functions.sh
 
-#检测IP列表
-chk_ip_list="www.baidu.com 114.114.114.114 119.29.29.29"
+#Detect IP list
+chk_ip_list="208.67.222.222 8.8.8.8 1.1.1.1 149.112.112.112"
 origfirewall=$(uci get firewall.@zone[1].network)
 backupdev=$(uci get syncdial.config.devbackup)
 norun=$(echo $origfirewall|grep vwan)
@@ -18,20 +18,20 @@ dial_type=$(uci get syncdial.config.dial_type)
 [ "$dial_type" -eq 2 ] && {
 	wanselect2=$(uci get syncdial.config.wanselect2)
 	[ $? -ne 0 ] && {
-		logger -t Syncppp  "You must select another pppoe interface ! 启用双线多拨必须同时选择第二个外网接口！"
+		logger -t Syncppp  "You must select another pppoe interface !"
 		return 0
 	}
 
 	wannum2=$(uci get syncdial.config.wannum2)
 	[ $? -ne 0 ] && {
-		logger -t Syncppp  "When dualdial is enabled, the number of the second virtual WAN cannot be blank! 启用双线多拨时第二个虚拟WAN接口数不能为空！"
+		logger -t Syncppp  "When dualdial is enabled, the number of the second virtual WAN cannot be blank! "
 		return 0
 	}
 	bindwan2=$(uci -q get syncdial.config.bindwan2)
 }
 
-#添加MWAN负载均衡相关配置
-#$1:接口名称
+#Add MWAN load balancing related configuration
+#$1: interface name
 mwan_cfg_add() {
 	#gen mwan3_interface
 	uci set mwan3.${1}=interface
@@ -62,16 +62,16 @@ mwan_cfg_add() {
 	uci add_list mwan3.balanced.use_member=${1}_m1_w1
 }
 
-#删除MWAN负载均衡相关配置
-#$1:接口名称
+#Delete MWAN load balancing related configuration
+#$1: interface name
 mwan_cfg_del() {
 	uci del mwan3.${1}
 	uci del mwan3.${1}_m1_w1
 	uci del_list mwan3.balanced.use_member=${1}_m1_w1
 }
 
-#添加macvlan设备
-#$1:设虚拟备名称 $2:原始设备名称
+#Add macvlan device
+#$1: set virtual device name $2: original device name
 macvlan_dev_add() {
 	uci set network.macvlandev_${1}=device
 	uci set network.macvlandev_${1}.name=${1}
@@ -79,8 +79,8 @@ macvlan_dev_add() {
 	uci set network.macvlandev_${1}.type=macvlan
 }
 
-#添加PPPoE接口
-#$1:接口名称 $2:设备名称 $3:账户 $4:密码 $5:网关跃点
+#Add PPPoE interface
+#$1: interface name $2: device name $3: account $4: password $5: gateway hop
 pppoe_if_add() {
 	#gen vwan macaddr
 	NEW_MACADDR=$(openssl rand -hex 6 | sed 's/\(..\)/\1:/g; s/.$//')

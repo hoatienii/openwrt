@@ -4,7 +4,7 @@ if not nixio.fs.access("/etc/config/syncdial")then
 return
 end
 local e
-e=entry({"admin","network","syncdial"},cbi("syncdial"),_("多线多拨"),103)
+e=entry({"admin","network","syncdial"},cbi("syncdial"),_("Multi-line multi-dial"),103)
 e.dependent=true
 e=entry({"admin","network","macvlan_redial"},call("redial"),nil)
 e.leaf=true
